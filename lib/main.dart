@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:social_media_app/auth/login_or_register.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+    name: 'social_media_app',
+  );
   runApp(const MyApp());
 }
 
