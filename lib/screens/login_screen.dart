@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:social_media_app/custom%20widgets/butten.dart';
 import 'package:social_media_app/custom%20widgets/text_feild.dart';
@@ -14,6 +16,19 @@ class _LoginScreenState extends State<LoginScreen> {
   //text editing controller
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  void signIn() async {
+    try {
+      print("hello called");
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+    } on FirebaseException catch (e) {
+      print("hello ${e.toString()}");
+      if (e.code == 'user-not-found') {
+        print("hello dingan");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +78,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 24,
                 ),
                 // butten
-                Mybutten(ontap: () {}, text: 'Sign in'),
+                Mybutten(
+                    ontap: () {
+                      print("hello tapped");
+                      signIn();
+                    },
+                    text: 'Sign in'),
                 //go to register page
                 const SizedBox(
                   height: 24,

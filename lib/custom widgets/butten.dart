@@ -7,15 +7,18 @@ class Mybutten extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8), color: Colors.black),
-      child: Center(
-        child: Text(
-          text,
-          style: const TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+    return GestureDetector(
+      onTap: ontap,
+      child: Container(
+        padding: const EdgeInsets.all(25),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8), color: Colors.black),
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          ),
         ),
       ),
     );
