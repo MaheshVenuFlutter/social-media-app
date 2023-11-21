@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:social_media_app/custom%20widgets/butten.dart';
 import 'package:social_media_app/custom%20widgets/text_feild.dart';
@@ -15,6 +16,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPassword = TextEditingController();
+  // show error message
+  void displayErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(message),
+      ),
+    );
+  }
+
+  //regester user
+  void signUp() async {
+    //show progres indicator
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    //make sure passwordMatch
+
+    if (passwordController.text != confirmPassword.text) {
+      // pop progress indicator
+      Navigator.pop(context);
+      //show error meassage
+      displayErrorMessage("Passwords don't match!");
+      return;
+    }
+    //creating user
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+      //pop loadig indicator
+
+      Navigator.pop(context);
+    } on FirebaseException catch (e) {
+      //pop loadig indicator
+
+      Navigator.pop(context);
+      //show error to users
+
+      displayErrorMessage(e.code);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 24,
                 ),
                 MyTestFeild(
-                  controller: passwordController,
+                  controller: confirmPassword,
                   hint: 'confirm password',
                   obscureText: true,
                 ),
@@ -71,7 +117,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 24,
                 ),
                 // butten
-                Mybutten(ontap: () {}, text: 'Sign up'),
+                Mybutten(
+                    ontap: () {
+                      signUp();
+                    },
+                    text: 'Sign up'),
                 //go to register page
                 const SizedBox(
                   height: 24,
