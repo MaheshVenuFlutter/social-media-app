@@ -18,16 +18,36 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
 
   void signIn() async {
+    //loading indicator
+    showDialog(
+        context: context,
+        builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ));
     try {
-      print("hello called");
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
-    } on FirebaseException catch (e) {
-      print("hello ${e.toString()}");
-      if (e.code == 'user-not-found') {
-        print("hello dingan");
+      //pop the loading indicator
+      if (context.mounted) {
+        Navigator.pop(context);
       }
+    } on FirebaseException catch (e) {
+      //pop loading indicator
+      Navigator.pop(context);
+
+      //diaplay error message
+      displayErrorMessage(e.code);
     }
+  }
+
+  // display a dialoug message
+  void displayErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(message),
+      ),
+    );
   }
 
   @override
