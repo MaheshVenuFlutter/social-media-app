@@ -14,10 +14,8 @@ class AuthScreen extends StatelessWidget {
           builder: (context, snapshot) {
             //user is loged in
             if (snapshot.hasData) {
-              print("hello dingan");
               return const HomeScreen();
             } else {
-              print("hello j");
               return LoginOrRegister();
             }
           }),
