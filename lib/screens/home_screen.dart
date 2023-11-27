@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'UserEmail': currentUser!.email,
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
+          'Likes': [],
         },
       );
     }
@@ -78,6 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       return WallPost(
                         message: post['Message'],
                         user: post['UserEmail'],
+                        postId: post.id,
+                        likes: List<String>.from(post['Likes'] ?? []),
                       );
                     },
                   );
