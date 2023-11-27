@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:social_media_app/custom%20widgets/drawer.dart';
 import 'package:social_media_app/custom%20widgets/text_feild.dart';
 import 'package:social_media_app/custom%20widgets/wall_post.dart';
+import 'package:social_media_app/screens/profile_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,21 +45,30 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void goToProfilePage() {
+    // pop the menu drawer
+    Navigator.pop(context);
+
+    // go to profile screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfilePage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
+      drawer: MyDrawer(
+        signOut: signOut,
+        profileTap: goToProfilePage,
+      ),
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
         title: Text("dinagn"),
-        actions: [
-          //sign out
-          IconButton(
-              onPressed: () {
-                signOut();
-              },
-              icon: Icon(Icons.logout_outlined))
-        ],
       ),
       body: Column(
         children: [
