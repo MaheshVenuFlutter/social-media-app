@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:social_media_app/auth/auth.dart';
-import 'package:social_media_app/auth/login_or_register.dart';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:social_media_app/auth/auth.dart';
+import 'package:social_media_app/screens/profile_page.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -19,8 +20,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthScreen(),
-      //LoginOrRegister(),
+      home:
+          //ProfilePage(),
+          AuthScreen(),
     );
   }
 }

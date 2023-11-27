@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:social_media_app/custom%20widgets/butten.dart';
@@ -46,8 +47,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
     //creating user
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text);
+
+      // create a new document in the fire base cloude data base called Users
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userCredential.user!.email)
+          .set({
+        'username': emailController.text.split('@')[0], // take the name befor @
+        'bio': 'empty bio..' // initally empty
+        // add more feilds in future
+      });
       //pop loadig indicator
 
       Navigator.pop(context);
