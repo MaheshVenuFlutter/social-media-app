@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:social_media_app/custom%20widgets/drawer.dart';
 import 'package:social_media_app/custom%20widgets/text_feild.dart';
 import 'package:social_media_app/custom%20widgets/wall_post.dart';
+import 'package:social_media_app/healper/date_formater.dart';
 import 'package:social_media_app/screens/profile_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -91,6 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         message: post['Message'],
                         user: post['UserEmail'],
                         postId: post.id,
+                        time: fromateDateTime(
+                          post['TimeStamp'],
+                        ),
                         likes: List<String>.from(post['Likes'] ?? []),
                       );
                     },
