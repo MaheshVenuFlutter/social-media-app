@@ -29,6 +29,7 @@ class _WallPostState extends State<WallPost> {
   //get the user details from firebase
   final currentUser = FirebaseAuth.instance.currentUser!;
   bool isLiked = false;
+  bool showComment = false;
 
   // comment Text controller
 
@@ -38,6 +39,12 @@ class _WallPostState extends State<WallPost> {
   void initState() {
     super.initState();
     isLiked = widget.likes.contains(currentUser.email);
+  }
+
+  void toggleComment() {
+    setState(() {
+      showComment = !showComment;
+    });
   }
 
   //toggle like
@@ -77,13 +84,13 @@ class _WallPostState extends State<WallPost> {
         "CommentText": commentText,
         "CommentedBy": currentUser.email,
         "CommentTime": Timestamp.now(),
-
         // formate later
       },
     );
   }
 
   // show a dialoug box for adding comment
+  // neeed to fid a way to up date comment count
 
   void showCommentDialouge() {
     showDialog(
@@ -97,6 +104,14 @@ class _WallPostState extends State<WallPost> {
           ),
         ),
         actions: [
+          // cancel butten
+          TextButton(
+            onPressed: () {
+              _commentTextController.clear();
+              Navigator.pop(context);
+            },
+            child: const Text("Cancel"),
+          ),
           // save butten
           TextButton(
             onPressed: () {
@@ -110,13 +125,6 @@ class _WallPostState extends State<WallPost> {
             },
             child: const Text("Post"),
           ),
-          // cancel butten
-          TextButton(
-              onPressed: () {
-                _commentTextController.clear();
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"))
         ],
       ),
     );
@@ -196,17 +204,43 @@ class _WallPostState extends State<WallPost> {
                 // comment butten and comment count
                 Column(
                   children: [
-                    CommentButten(ontap: showCommentDialouge),
+                    CommentButten(ontap: toggleComment
+                        // showCommentDialouge
+                        ),
 
                     const SizedBox(
                       height: 5,
                     ),
 
                     //like count
-                    Text(
-                      widget.likes.length.toString(),
-                      style: const TextStyle(color: Colors.grey),
-                    ),
+
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("Users Post")
+                            .doc(widget.postId)
+                            .collection("Comments")
+                            .orderBy("CommentTime", descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          // show the loading cirecle if there is no data
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          // Get the list of documents
+                          List<QueryDocumentSnapshot> comments =
+                              snapshot.data!.docs;
+
+                          // Get the length of the list
+                          int? commentsLength = comments.length;
+
+                          return Text(
+                            commentsLength.toString() ?? "0",
+                            style: const TextStyle(color: Colors.grey),
+                          );
+                        }),
 
                     const SizedBox(
                       width: 10,
@@ -219,46 +253,76 @@ class _WallPostState extends State<WallPost> {
               height: 5,
             ),
             // display the comments
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("Users Post")
-                  .doc(widget.postId)
-                  .collection("Comments")
-                  .orderBy("CommentTime", descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                // show the loading cirecle if there is no data
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+
+            Visibility(
+              visible: showComment,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("Users Post")
+                    .doc(widget.postId)
+                    .collection("Comments")
+                    .orderBy("CommentTime", descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  // show the loading cirecle if there is no data
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  return Column(
+                    children: [
+                      ListView(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: snapshot.data!.docs.map(
+                          (doc) {
+                            // get the coments
+
+                            final commentData =
+                                doc.data() as Map<String, dynamic>;
+                            // geting comment length
+
+                            // Get the list of documents
+                            List<QueryDocumentSnapshot> comments =
+                                snapshot.data!.docs;
+
+                            // Get the length of the list
+                            int commentsLength = comments.length;
+                            // return the comment
+                            return Comment(
+                              text: commentData["CommentText"],
+                              time: fromateDateTime(commentData["CommentTime"]),
+                              user: commentData["CommentedBy"],
+                            );
+                          },
+                        ).toList(),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          showCommentDialouge();
+                        },
+                        child: const Row(
+                          children: [
+                            Text("add a comment..."),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Icon(
+                              Icons.comment,
+                              color: Colors.grey,
+                            )
+                          ],
+                        ),
+                      )
+                    ],
                   );
-                }
-                return ListView(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: snapshot.data!.docs.map(
-                    (doc) {
-                      // get the coments
-
-                      final commentData = doc.data() as Map<String, dynamic>;
-                      // geting comment length
-
-                      // Get the list of documents
-                      List<QueryDocumentSnapshot> comments =
-                          snapshot.data!.docs;
-
-                      // Get the length of the list
-                      int commentsLength = comments.length;
-                      // return the comment
-                      return Comment(
-                        text: commentData["CommentText"],
-                        time: fromateDateTime(commentData["CommentTime"]),
-                        user: commentData["CommentedBy"],
-                      );
-                    },
-                  ).toList(),
-                );
-              },
+                },
+              ),
             )
           ],
         ),

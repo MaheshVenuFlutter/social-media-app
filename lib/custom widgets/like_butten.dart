@@ -12,7 +12,7 @@ class LikeButten extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onDoubleTap: onTap,
+      onTap: onTap,
       child: Icon(
         isLiked ? Icons.favorite : Icons.favorite_border,
         color: isLiked ? Colors.red : Colors.grey,
