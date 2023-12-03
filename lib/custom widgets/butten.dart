@@ -12,7 +12,8 @@ class Mybutten extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(25),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8), color: Colors.black),
+            borderRadius: BorderRadius.circular(8),
+            color: Theme.of(context).colorScheme.primary),
         child: Center(
           child: Text(
             text,

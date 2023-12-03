@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:social_media_app/custom%20widgets/comment.dart';
 import 'package:social_media_app/custom%20widgets/comment_butten.dart';
+import 'package:social_media_app/custom%20widgets/delete_butten.dart';
 import 'package:social_media_app/custom%20widgets/like_butten.dart';
 import 'package:social_media_app/healper/date_formater.dart';
 
@@ -98,6 +99,7 @@ class _WallPostState extends State<WallPost> {
       builder: (context) => AlertDialog(
         title: Text("Add Comment"),
         content: TextField(
+          cursorColor: Theme.of(context).colorScheme.outline,
           controller: _commentTextController,
           decoration: InputDecoration(
             hintText: "Your comment...",
@@ -110,7 +112,10 @@ class _WallPostState extends State<WallPost> {
               _commentTextController.clear();
               Navigator.pop(context);
             },
-            child: const Text("Cancel"),
+            child: Text(
+              "Cancel",
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
           ),
           // save butten
           TextButton(
@@ -123,7 +128,65 @@ class _WallPostState extends State<WallPost> {
 
               Navigator.pop(context);
             },
-            child: const Text("Post"),
+            child: Text(
+              "Post",
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void deletePost() {
+    //show  a dialouge box asking for confirmatio befor deletig the post
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Post"),
+        content: const Text("Are you sure you want to delete this post"),
+        actions: [
+          // cancle
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Cancel"),
+          ),
+          //detete
+          TextButton(
+            onPressed: () async {
+              // delete the comments first
+              final commentDoc = await FirebaseFirestore.instance
+                  .collection("User Posts")
+                  .doc(widget.postId)
+                  .collection("Comments")
+                  .get();
+              for (var doc in commentDoc.docs) {
+                await FirebaseFirestore.instance
+                    .collection("User Posts")
+                    .doc(widget.postId)
+                    .collection("Comments")
+                    .doc(doc.id)
+                    .delete();
+              }
+              // delete the post
+              FirebaseFirestore.instance
+                  .collection("User Posts")
+                  .doc(widget.postId)
+                  .delete()
+                  .then((value) {
+                print(" post deleted");
+                //todo;
+                // add a task bar showing the sucess message in future
+              }).catchError((error) {
+                //todo;
+                // add a task bar showing error message
+                print("error = $error");
+              });
+              Navigator.pop(context);
+            },
+            child: const Text("delete"),
           ),
         ],
       ),
@@ -148,15 +211,24 @@ class _WallPostState extends State<WallPost> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(widget.message),
+                    const Expanded(
+                      child: SizedBox(),
+                    ),
                     Text(
                       widget.time,
                       style: TextStyle(
                         color: Colors.grey[400],
                       ),
                     ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    // user should be able to delete only his posts
+                    if (widget.user == currentUser.email)
+                      DeleteButten(ontap: deletePost),
                   ],
                 ),
                 const SizedBox(

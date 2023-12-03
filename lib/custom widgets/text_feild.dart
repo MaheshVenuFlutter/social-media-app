@@ -13,6 +13,7 @@ class MyTestFeild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      cursorColor: Theme.of(context).colorScheme.outline,
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(

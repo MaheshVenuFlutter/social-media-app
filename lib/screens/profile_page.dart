@@ -26,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Theme.of(context).colorScheme.background,
         title: Text(
           "Edit $feild",
           style: const TextStyle(color: Colors.white),
@@ -81,9 +81,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Colors.grey[900],
         title: const Text("Profile Screen"),
       ),
       body: StreamBuilder<DocumentSnapshot>(
