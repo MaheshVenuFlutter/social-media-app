@@ -5,13 +5,13 @@ import 'package:social_media_app/auth/auth.dart';
 import 'package:social_media_app/screens/profile_page.dart';
 import 'package:social_media_app/theme/dark_theme.dart';
 import 'package:social_media_app/theme/light_theme.dart';
-import 'firebase_options.dart';
+// import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+      // options: DefaultFirebaseOptions.currentPlatform,
+      );
   runApp(const MyApp());
 }
 
