@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_media_app/custom%20widgets/delete_my_account.dart';
 import 'package:social_media_app/custom%20widgets/my_list_tile.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -42,9 +43,20 @@ class MyDrawer extends StatelessWidget {
             text: 'L O G O U T',
             ontap: signOut,
           ),
+
+          MyListTile(
+            icon: Icons.delete,
+            text: 'D E L E T E  A C C O U N T',
+            ontap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (c) => DeleteMyAccount(),
+              ),
+            ),
+          ),
           const SizedBox(
             height: 20,
-          )
+          ),
         ],
       ),
     );
